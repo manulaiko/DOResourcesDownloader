@@ -17,6 +17,7 @@ Available arguments:
  * `-2` - `--2d`: Downloads only 2D client files.
  * `-3` - `--3d`: Downloads only 3D client files.
  * `-i` - `--img`: Downloads only `do_img`.
+ * `-h` - `--host`: Host to download files from (default `test2.darkorbit.bigpoint.com`)
 
 All the parameters can be combined.
 
@@ -27,6 +28,8 @@ java -jar bin/dord.jar --swf --2d --3d ~/DarkOrbit
 java -jar bin/dord.jar --img ~/DarkOrbit
 
 java -jar bin/dord.jar --swf --xml ~/DarkOrbit
+
+java -jar bin/dord.jar -h test3.darkorbit.bigpoint.com
 
 java -jar bin/dord.jar 192.168.0.100:8080
 
