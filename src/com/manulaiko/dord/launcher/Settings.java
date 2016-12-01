@@ -60,4 +60,9 @@ public class Settings
      * Proxy port.
      */
     public static int proxyPort = 0;
+
+    /**
+     * Host to download the files from.
+     */
+    public static String host = "test2.darkorbit.bigpoint.com";
 }
