@@ -10,7 +10,6 @@ import java.util.HashMap;
 import com.manulaiko.dord.launcher.Settings;
 import com.manulaiko.tabitha.Console;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -161,42 +160,9 @@ public class Downloader
      */
     public void graphics2D()
     {
-        Document xml = this.loadXML("/spacemap/xml/resources.xml");
-        if(xml == null) {
-            Console.debug("Couldn't download '/spacemap/xml/resources.xml'!");
-
-            return;
-        }
-
-        NodeList l = xml.getElementsByTagName("location");
-        NodeList f = xml.getElementsByTagName("file");
-
-        HashMap<String, String> locations = new HashMap<>();
-        ArrayList<String>       files     = new ArrayList<>();
-
-        for(int i = 0; i < l.getLength(); i++) {
-            Node location = l.item(i);
-            locations.put(
-                    location.getAttributes().getNamedItem("id").getTextContent(),
-                    location.getAttributes().getNamedItem("path").getTextContent()
-            );
-        }
-
-        for(int i = 0; i < f.getLength(); i++) {
-            Node file = f.item(i);
-
-            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
-            String name      = file.getAttributes().getNamedItem("name").getTextContent();
-            String extension = file.getAttributes().getNamedItem("type").getTextContent();
-
-            files.add(
-                    "/spacemap/"+ location + name +"."+ extension
-            );
-        }
-
         Console.println("Downloading 2D graphic files...");
         long start = System.currentTimeMillis();
-        long bytes = this._cd.download(files);
+        long bytes = this._cd.download(this.parseXML("/spacemap/xml/resources.xml", "/spacemap"));
         long end   = System.currentTimeMillis();
 
         this.printStats(bytes, start, end);
@@ -209,42 +175,9 @@ public class Downloader
      */
     public void graphics3D()
     {
-        Document xml = this.loadXML("/spacemap/xml/resources_3d.xml");
-        if(xml == null) {
-            Console.debug("Couldn't download '/spacemap/xml/resources_3d.xml'!");
-
-            return;
-        }
-
-        NodeList l = xml.getElementsByTagName("location");
-        NodeList f = xml.getElementsByTagName("file");
-
-        HashMap<String, String> locations = new HashMap<>();
-        ArrayList<String>       files     = new ArrayList<>();
-
-        for(int i = 0; i < l.getLength(); i++) {
-            Node location = l.item(i);
-            locations.put(
-                    location.getAttributes().getNamedItem("id").getTextContent(),
-                    location.getAttributes().getNamedItem("path").getTextContent()
-            );
-        }
-
-        for(int i = 0; i < f.getLength(); i++) {
-            Node file = f.item(i);
-
-            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
-            String name      = file.getAttributes().getNamedItem("name").getTextContent();
-            String extension = file.getAttributes().getNamedItem("type").getTextContent();
-
-            files.add(
-                    "/spacemap/"+ location + name +"."+ extension
-            );
-        }
-
         Console.println("Downloading 3D graphic files...");
         long start = System.currentTimeMillis();
-        long bytes = this._cd.download(files);
+        long bytes = this._cd.download(this.parseXML("/spacemap/xml/resources_3d.xml", "/spacemap"));
         long end   = System.currentTimeMillis();
 
         this.printStats(bytes, start, end);
@@ -257,74 +190,14 @@ public class Downloader
      */
     public void images()
     {
-        Document xml = this.loadXML("/do_img/global/xml/resource_items.xml");
-        if(xml == null) {
-            Console.debug("Couldn't download '/do_img/global/xml/resource_items.xml'!");
+        ArrayList<String> items        = this.parseXML("/do_img/global/xml/resources_items.xml", "/do_img/global");
+        ArrayList<String> achievements = this.parseXML("/do_img/global/xml/resourcesAchievements.xml", "/do_img/global");
 
-            return;
-        }
-
-        NodeList l = xml.getElementsByTagName("location");
-        NodeList f = xml.getElementsByTagName("file");
-
-        HashMap<String, String> locations = new HashMap<>();
-        ArrayList<String>       files     = new ArrayList<>();
-
-        for(int i = 0; i < l.getLength(); i++) {
-            Node location = l.item(i);
-            locations.put(
-                    location.getAttributes().getNamedItem("id").getTextContent(),
-                    location.getAttributes().getNamedItem("path").getTextContent()
-            );
-        }
-
-        for(int i = 0; i < f.getLength(); i++) {
-            Node file = f.item(i);
-
-            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
-            String name      = file.getAttributes().getNamedItem("name").getTextContent();
-            String extension = file.getAttributes().getNamedItem("type").getTextContent();
-
-            files.add(
-                    "/do_img/global/"+ location + name +"."+ extension
-            );
-        }
-
-        xml = this.loadXML("/do_img/global/xml/resource_achievements.xml");
-        if(xml == null) {
-            Console.debug("Couldn't download '/do_img/global/xml/resource_achievements.xml'!");
-
-            return;
-        }
-
-        l = xml.getElementsByTagName("location");
-        f = xml.getElementsByTagName("file");
-
-        locations = new HashMap<>();
-
-        for(int i = 0; i < l.getLength(); i++) {
-            Node location = l.item(i);
-            locations.put(
-                    location.getAttributes().getNamedItem("id").getTextContent(),
-                    location.getAttributes().getNamedItem("path").getTextContent()
-            );
-        }
-
-        for(int i = 0; i < f.getLength(); i++) {
-            Node file = f.item(i);
-
-            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
-            String name      = file.getAttributes().getNamedItem("name").getTextContent();
-            String extension = file.getAttributes().getNamedItem("type").getTextContent();
-
-            files.add(
-                    "/do_img/global/"+ location + name +"."+ extension
-            );
-        }
+        items.addAll(achievements);
 
         Console.println("Downloading image files...");
         long start = System.currentTimeMillis();
-        long bytes = this._cd.download(files);
+        long bytes = this._cd.download(items);
         long end   = System.currentTimeMillis();
 
         this.printStats(bytes, start, end);
@@ -337,42 +210,9 @@ public class Downloader
      */
     public void loadingScreenAssets()
     {
-        Document xml = this.loadXML("/spacemap/xml/assets_loadingScreen.xml");
-        if(xml == null) {
-            Console.debug("Couldn't download '/spacemap/xml/assets_loadingScreen.xml'!");
-
-            return;
-        }
-
-        NodeList l = xml.getElementsByTagName("location");
-        NodeList f = xml.getElementsByTagName("file");
-
-        HashMap<String, String> locations = new HashMap<>();
-        ArrayList<String>       files     = new ArrayList<>();
-
-        for(int i = 0; i < l.getLength(); i++) {
-            Node location = l.item(i);
-            locations.put(
-                    location.getAttributes().getNamedItem("id").getTextContent(),
-                    location.getAttributes().getNamedItem("path").getTextContent()
-            );
-        }
-
-        for(int i = 0; i < f.getLength(); i++) {
-            Node file = f.item(i);
-
-            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
-            String name      = file.getAttributes().getNamedItem("name").getTextContent();
-            String extension = file.getAttributes().getNamedItem("type").getTextContent();
-
-            files.add(
-                    "/spacemap/"+ location + name +"."+ extension
-            );
-        }
-
         Console.println("Downloading loadingScreen assets files...");
         long start = System.currentTimeMillis();
-        long bytes = this._cd.download(files);
+        long bytes = this._cd.download(this.parseXML("/spacemap/xml/assets_loadingScreen.xml", "/spacemap"));
         long end   = System.currentTimeMillis();
 
         this.printStats(bytes, start, end);
@@ -422,6 +262,52 @@ public class Downloader
         kbs = (bytes / unit) / (millis / 1000);
 
         Console.println("Downloaded "+ downloadedBytes +" in "+ elapsedTime +" at "+ kbs +" KiB/s");
+    }
+
+    /**
+     * Parses a XML file.
+     *
+     * @param path   Path to XML file.
+     * @param suffix Suffix for the files of the XML file.
+     *
+     * @return Files from XML file.
+     */
+    public ArrayList<String> parseXML(String path, String suffix)
+    {
+        ArrayList<String>       files     = new ArrayList<>();
+        HashMap<String, String> locations = new HashMap<>();
+
+        Document xml = this.loadXML(path);
+        if(xml == null) {
+            Console.debug("Couldn't download '"+ path +"'!");
+
+            return files;
+        }
+
+        NodeList l = xml.getElementsByTagName("location");
+        NodeList f = xml.getElementsByTagName("file");
+
+        for(int i = 0; i < l.getLength(); i++) {
+            Node location = l.item(i);
+            locations.put(
+                    location.getAttributes().getNamedItem("id").getTextContent(),
+                    location.getAttributes().getNamedItem("path").getTextContent()
+            );
+        }
+
+        for(int i = 0; i < f.getLength(); i++) {
+            Node file = f.item(i);
+
+            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
+            String name      = file.getAttributes().getNamedItem("name").getTextContent();
+            String extension = file.getAttributes().getNamedItem("type").getTextContent();
+
+            files.add(
+                    suffix +"/"+ location + name +"."+ extension
+            );
+        }
+
+        return files;
     }
 
     /**
