@@ -47,6 +47,11 @@ public class Settings
     public static boolean downloadImages = false;
 
     /**
+     * Whether we're just downloading loadingScreen assets files or not.
+     */
+    public static boolean downloadLoadingScreenAssets = false;
+
+    /**
      * Where to download the resources.
      */
     public static File path = new File("./");

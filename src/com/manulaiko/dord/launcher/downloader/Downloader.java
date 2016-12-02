@@ -80,6 +80,13 @@ public class Downloader
 
         if(
             Settings.downloadAll ||
+            Settings.downloadLoadingScreenAssets
+        ) {
+            this.loadingScreenAssets();
+        }
+
+        if(
+            Settings.downloadAll ||
             Settings.download2D
         ) {
             this.graphics2D();
@@ -316,6 +323,54 @@ public class Downloader
         }
 
         Console.println("Downloading image files...");
+        long start = System.currentTimeMillis();
+        long bytes = this._cd.download(files);
+        long end   = System.currentTimeMillis();
+
+        this.printStats(bytes, start, end);
+
+        this._bytes += bytes;
+    }
+
+    /**
+     * Downloads 3D graphic files.
+     */
+    public void loadingScreenAssets()
+    {
+        Document xml = this.loadXML("/spacemap/xml/assets_loadingScreen.xml");
+        if(xml == null) {
+            Console.debug("Couldn't download '/spacemap/xml/assets_loadingScreen.xml'!");
+
+            return;
+        }
+
+        NodeList l = xml.getElementsByTagName("location");
+        NodeList f = xml.getElementsByTagName("file");
+
+        HashMap<String, String> locations = new HashMap<>();
+        ArrayList<String>       files     = new ArrayList<>();
+
+        for(int i = 0; i < l.getLength(); i++) {
+            Node location = l.item(i);
+            locations.put(
+                    location.getAttributes().getNamedItem("id").getTextContent(),
+                    location.getAttributes().getNamedItem("path").getTextContent()
+            );
+        }
+
+        for(int i = 0; i < f.getLength(); i++) {
+            Node file = f.item(i);
+
+            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
+            String name      = file.getAttributes().getNamedItem("name").getTextContent();
+            String extension = file.getAttributes().getNamedItem("type").getTextContent();
+
+            files.add(
+                    "/spacemap/"+ location + name +"."+ extension
+            );
+        }
+
+        Console.println("Downloading loadingScreen assets files...");
         long start = System.currentTimeMillis();
         long bytes = this._cd.download(files);
         long end   = System.currentTimeMillis();

@@ -92,6 +92,12 @@ public class Main
 
                     break;
 
+                case "-l":
+                case "--loadingScreenAssets":
+                    Settings.downloadLoadingScreenAssets = true;
+
+                    break;
+
                 case "-h":
                 case "--host":
                     Settings.host = arg;
@@ -201,9 +207,10 @@ public class Main
         if(!Settings.downloadAll) {
             Console.debug("Download SWF files: "+ Settings.downloadSWF);
             Console.debug("Download XML files: "+ Settings.downloadXML);
-            Console.debug("Download images: "+ Settings.downloadImages);
+            Console.debug("Download LoadingScreen assets: "+ Settings.downloadLoadingScreenAssets);
             Console.debug("Download 2D client graphics: "+ Settings.download2D);
             Console.debug("Download 3D client graphics: "+ Settings.download3D);
+            Console.debug("Download images: "+ Settings.downloadImages);
         } else {
             Console.debug("All resources will be downloaded!");
         }

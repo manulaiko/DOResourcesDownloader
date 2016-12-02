@@ -1,5 +1,5 @@
 # DOResourcesDownloader
-DarkOrbit Resources Downloader
+DarkOrbit Resources Downloader.
 
 Usage:
 ```bash
@@ -17,7 +17,8 @@ Available arguments:
  * `-2` - `--2d`: Downloads only 2D client files.
  * `-3` - `--3d`: Downloads only 3D client files.
  * `-i` - `--img`: Downloads only `do_img`.
- * `-h` - `--host`: Host to download files from (default `test2.darkorbit.bigpoint.com`)
+ * `-l` - `--loadingScreenAssets`: Downloads only loading screen assets.
+ * `-h` - `--host`: Host to download files from (default `test2.darkorbit.bigpoint.com`).
 
 All the parameters can be combined.
 
