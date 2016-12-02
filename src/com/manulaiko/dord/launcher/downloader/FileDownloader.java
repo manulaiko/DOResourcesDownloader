@@ -4,12 +4,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 
+import com.manulaiko.dord.launcher.Main;
 import com.manulaiko.dord.launcher.Settings;
 import com.manulaiko.tabitha.Console;
 
@@ -55,7 +54,7 @@ public class FileDownloader
     {
         try {
             URL    url = new URL("http://" + this._host + path);
-            String p   = this._path.getAbsolutePath() + (path.replaceAll("/", File.separator));
+            String p   = Main.getPath(this._path, path);
 
             Console.debug("Downloading "+ url +"...");
             return this.download(url, p);
