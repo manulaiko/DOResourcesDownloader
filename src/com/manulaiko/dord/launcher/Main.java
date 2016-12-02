@@ -45,7 +45,19 @@ public class Main
      */
     private static void _parseArguments(String[] args)
     {
+        boolean nextArgIsHost = false;
+
         for(String arg : args) {
+            if(nextArgIsHost) {
+                nextArgIsHost = false;
+
+                if(!arg.startsWith("-")) {
+                    Settings.host = arg;
+                }
+
+                continue;
+            }
+
             switch(arg.toLowerCase())
             {
                 case "-d":
@@ -100,7 +112,7 @@ public class Main
 
                 case "-h":
                 case "--host":
-                    Settings.host = arg;
+                    nextArgIsHost = true;
 
                     break;
 
@@ -214,5 +226,24 @@ public class Main
         } else {
             Console.debug("All resources will be downloaded!");
         }
+    }
+
+    /**
+     * Winshit's path parser.
+     *
+     * @param path       Base path.
+     * @param additional Additional path info.
+     *
+     * @return `path` + `additional`.
+     */
+    public static String getPath(File path, String additional)
+    {
+        String base = path.getAbsolutePath();
+
+        if(System.getProperty("os.name").contains("Windows")) {
+            additional = additional.replaceAll("/", "\\");
+        }
+
+        return base + additional;
     }
 }

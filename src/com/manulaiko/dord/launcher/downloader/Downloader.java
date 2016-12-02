@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.manulaiko.dord.launcher.Main;
 import com.manulaiko.dord.launcher.Settings;
 import com.manulaiko.tabitha.Console;
 import org.w3c.dom.Document;
@@ -324,7 +325,7 @@ public class Downloader
      */
     public Document loadXML(String path)
     {
-        File f = new File(this._path.getAbsolutePath() + (path.replaceAll("/", File.separator)));
+        File f = new File(Main.getPath(this._path, path));
         if(!f.exists()) {
             f = this._downloadXML(path);
         }
