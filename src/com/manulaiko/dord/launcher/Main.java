@@ -18,7 +18,7 @@ public class Main
     /**
      * Application version.
      */
-    public static final String version = "1.0.1";
+    public static final String version = "1.1.0";
 
     /**
      * Main method.
@@ -113,6 +113,12 @@ public class Main
                 case "-h":
                 case "--host":
                     nextArgIsHost = true;
+
+                    break;
+
+                case "-o":
+                case "--overwrite":
+                    Settings.overwrite = true;
 
                     break;
 
