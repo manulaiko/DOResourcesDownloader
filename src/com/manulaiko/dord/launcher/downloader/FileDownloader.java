@@ -139,14 +139,6 @@ public class FileDownloader
         try {
             URLConnection urlConn = url.openConnection();
 
-            if(!Settings.proxyHost.isEmpty()) {
-                Proxy proxy = new Proxy(
-                        Proxy.Type.HTTP,
-                        new InetSocketAddress(Settings.proxyHost, Settings.proxyPort)
-                );
-                urlConn = url.openConnection(proxy);
-            }
-
             is  = urlConn.getInputStream();       // Get connection input stream
             fos = new FileOutputStream(savePath); // Open output stream to local file
 

@@ -61,6 +61,11 @@ public class Downloader
      */
     public void start()
     {
+        if(!Settings.proxyHost.isEmpty()) {
+            System.setProperty("http.proxyHost", Settings.proxyHost);
+            System.setProperty("http.proxyPort", Settings.proxyPort +"");
+        }
+
         this._startTime = System.currentTimeMillis();
 
         if(
