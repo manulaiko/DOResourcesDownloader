@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -135,7 +137,15 @@ public class FileDownloader
         }
 
         try {
-            URLConnection urlConn = url.openConnection(); // Connect
+            URLConnection urlConn = url.openConnection();
+
+            if(!Settings.proxyHost.isEmpty()) {
+                Proxy proxy = new Proxy(
+                        Proxy.Type.HTTP,
+                        new InetSocketAddress(Settings.proxyHost, Settings.proxyPort)
+                );
+                urlConn = url.openConnection(proxy);
+            }
 
             is  = urlConn.getInputStream();       // Get connection input stream
             fos = new FileOutputStream(savePath); // Open output stream to local file
