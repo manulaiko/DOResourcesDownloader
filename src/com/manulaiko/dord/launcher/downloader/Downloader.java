@@ -245,6 +245,13 @@ public class Downloader
         long   millis          = end - start;
         long   kbs             = 0;
 
+        if(bytes <= 0) {
+            bytes = 1;
+        }
+        if(millis <= 0) {
+            millis = 1;
+        }
+
         int unit = 1024;
         if(bytes >= unit) {
             int exp = (int)(Math.log(bytes) / Math.log(unit));
@@ -265,7 +272,12 @@ public class Downloader
             elapsedTime = String.format("%02d minutes and %02d seconds", minute, second);
         }
 
-        kbs = (bytes / unit) / (millis / 1000);
+        long seconds = millis / 1000;
+        if(seconds <= 0) {
+            seconds = 1;
+        }
+
+        kbs = (bytes / unit) / seconds;
 
         Console.println("Downloaded "+ downloadedBytes +" in "+ elapsedTime +" at "+ kbs +" KiB/s");
     }
