@@ -70,4 +70,9 @@ public class Settings
      * Host to download the files from.
      */
     public static String host = "test2.darkorbit.bigpoint.com";
+
+    /**
+     * Whether already downloaded files should be over writed or not (skipped).
+     */
+    public static boolean overwrite = false;
 }

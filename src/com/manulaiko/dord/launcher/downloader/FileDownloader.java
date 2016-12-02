@@ -123,14 +123,23 @@ public class FileDownloader
         InputStream      is    = null;
         FileOutputStream fos   = null;
         long             bytes = 0;
-        File             p     = new File(savePath).getParentFile();
+        File             p     = new File(savePath);
 
         if(
-            !p.exists() &&
-            !p.mkdirs()
+            !p.getParentFile().exists() &&
+            !p.getParentFile().mkdirs()
         ) {
             Console.println("Couldn't make subdirectories for '"+ savePath +"'!");
             Console.println("Make sure write permissions are enabled!");
+
+            return bytes;
+        }
+
+        if(
+            p.exists()          &&
+            !Settings.overwrite
+        ) {
+            Console.debug("Skipping already downloaded file '"+ savePath +"'");
 
             return bytes;
         }

@@ -116,6 +116,12 @@ public class Main
 
                     break;
 
+                case "-o":
+                case "--overwrite":
+                    Settings.overwrite = true;
+
+                    break;
+
                 default:
                     Main._setProxyOrPath(arg);
 

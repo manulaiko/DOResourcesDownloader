@@ -19,6 +19,7 @@ Available arguments:
  * `-i` - `--img`: Downloads only `do_img`.
  * `-l` - `--loadingScreenAssets`: Downloads only loading screen assets.
  * `-h` - `--host`: Host to download files from (default `test2.darkorbit.bigpoint.com`).
+ * `-o` - `--overwrite`: Overwrites already downloaded files (by default already downloaded files will be skipped).
 
 All the parameters can be combined.
 
@@ -31,6 +32,8 @@ java -jar bin/dord.jar --img ~/DarkOrbit
 java -jar bin/dord.jar --swf --xml ~/DarkOrbit
 
 java -jar bin/dord.jar -h test3.darkorbit.bigpoint.com
+
+java -jar bin/dord.jar -h test3.darkorbit.bigpoint.com -o
 
 java -jar bin/dord.jar 192.168.0.100:8080
 
