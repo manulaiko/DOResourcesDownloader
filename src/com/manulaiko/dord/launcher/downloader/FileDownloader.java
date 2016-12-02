@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 
 import com.manulaiko.dord.launcher.Settings;
 import com.manulaiko.tabitha.Console;
@@ -55,7 +56,7 @@ public class FileDownloader
             String p   = this._path.getAbsolutePath() + (path.replaceAll("/", File.separator));
 
             Console.debug("Downloading "+ url +"...");
-            return this._download(url, p);
+            return this.download(url, p);
         } catch(Exception e) {
             Console.println("Couldn't download "+ path +"!");
             Console.println(e.getMessage());
@@ -87,6 +88,24 @@ public class FileDownloader
     }
 
     /**
+     * Downloads various files.
+     *
+     * @param files Files to download from remote host.
+     *
+     * @return Downloaded bytes.
+     */
+    public long download(ArrayList<String> files)
+    {
+        long bytes = 0;
+
+        for(String path : files) {
+            bytes += this.download(path);
+        }
+
+        return bytes;
+    }
+
+    /**
      * Actually performs the download.
      *
      * *cough* copy-paste *cough*.
@@ -98,7 +117,7 @@ public class FileDownloader
      *
      * @link http://stackoverflow.com/a/14413945 SO is bae.
      */
-    private long _download(URL url, String savePath) throws IOException
+    public long download(URL url, String savePath) throws IOException
     {
         InputStream      is    = null;
         FileOutputStream fos   = null;
