@@ -1,9 +1,18 @@
 package com.manulaiko.dord.launcher.downloader;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.manulaiko.dord.launcher.Settings;
 import com.manulaiko.tabitha.Console;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Downloads the files.
@@ -62,6 +71,20 @@ public class Downloader
             this.swf();
         }
 
+        if(
+            Settings.downloadAll ||
+            Settings.downloadXML
+        ) {
+            this.xml();
+        }
+
+        if(
+                Settings.downloadAll ||
+                Settings.download2D
+        ) {
+            this.graphics2D();
+        }
+
         this._endTime = System.currentTimeMillis();
 
         this.printStats(this._bytes, this._startTime, this._endTime);
@@ -79,6 +102,85 @@ public class Downloader
         };
 
         Console.println("Downloading swf files...");
+        long start = System.currentTimeMillis();
+        long bytes = this._cd.download(files);
+        long end   = System.currentTimeMillis();
+
+        this.printStats(bytes, start, end);
+
+        this._bytes += bytes;
+    }
+
+    /**
+     * Downloads XML files.
+     */
+    public void xml()
+    {
+        String[] files = new String[] {
+                "/spacemap/xml/assets_loadingScreen.xml",
+                "/spacemap/xml/game.xml",
+                "/spacemap/xml/maps.php",
+                "/spacemap/xml/profile.xml",
+                "/spacemap/xml/resources.xml",
+                "/spacemap/xml/resources_3d.xml"
+        };
+
+        Console.println("Downloading xml files...");
+        long start = System.currentTimeMillis();
+        long bytes = this._cd.download(files);
+        long end   = System.currentTimeMillis();
+
+        this.printStats(bytes, start, end);
+
+        this._bytes += bytes;
+    }
+
+    /**
+     * Downloads 2D graphic files.
+     */
+    public void graphics2D()
+    {
+        Document xml = this.loadXML("/spacemap/xml/resources.xml");
+        if(xml == null) {
+            Console.debug("Couldn't download '/spacemap/xml/resources.xml'!");
+
+            return;
+        }
+
+        NodeList l = xml.getElementsByTagName("location");
+        NodeList f = xml.getElementsByTagName("file");
+
+        HashMap<String, String> locations = new HashMap<>();
+        ArrayList<String>       files     = new ArrayList<>();
+
+        for(int i = 0; i < l.getLength(); i++) {
+            Node location = l.item(i);
+            locations.put(
+                    location.getAttributes().getNamedItem("id").getTextContent(),
+                    location.getAttributes().getNamedItem("path").getTextContent()
+            );
+
+            Console.debug(
+                    "Location: ",
+                    location.getAttributes().getNamedItem("id").getTextContent(),
+                    "\nPath: ",
+                    location.getAttributes().getNamedItem("path").getTextContent()
+            );
+        }
+
+        for(int i = 0; i < f.getLength(); i++) {
+            Node file = f.item(i);
+
+            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
+            String name      = file.getAttributes().getNamedItem("name").getTextContent();
+            String extension = file.getAttributes().getNamedItem("type").getTextContent();
+
+            files.add(
+                    "/spacemap/"+ location + name +"."+ extension
+            );
+        }
+
+        Console.println("Downloading 2D graphic files...");
         long start = System.currentTimeMillis();
         long bytes = this._cd.download(files);
         long end   = System.currentTimeMillis();
@@ -130,5 +232,55 @@ public class Downloader
         kbs = (bytes / unit) / (millis / 1000);
 
         Console.println("Downloaded "+ downloadedBytes +" in "+ elapsedTime +" at "+ kbs +" KiB/s");
+    }
+
+    /**
+     * Downloads a xml file and parses it.
+     *
+     * @param path Path to file.
+     *
+     * @return Parsed XML file.
+     */
+    public Document loadXML(String path)
+    {
+        File f = new File(this._path.getAbsolutePath() + (path.replaceAll("/", File.separator)));
+        if(!f.exists()) {
+            f = this._downloadXML(path);
+        }
+
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(f);
+
+            doc.normalizeDocument();
+
+            return doc;
+        } catch(Exception e) {
+            // Ignore
+        }
+
+        return null;
+    }
+
+    /**
+     * Downloads a XML file.
+     *
+     * @param path Path to file.
+     */
+    private File _downloadXML(String path)
+    {
+        try {
+            URL  url = new URL("http://" + Settings.host + path);
+            File tmp = File.createTempFile(path.replaceAll("/", "-"), ".xml");
+
+            this._cd.download(url, tmp.getAbsolutePath());
+
+            return tmp;
+        } catch(Exception e) {
+            // Ignore
+        }
+
+        return null;
     }
 }
