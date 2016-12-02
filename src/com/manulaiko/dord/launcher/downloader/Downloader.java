@@ -79,10 +79,17 @@ public class Downloader
         }
 
         if(
-                Settings.downloadAll ||
-                Settings.download2D
+            Settings.downloadAll ||
+            Settings.download2D
         ) {
             this.graphics2D();
+        }
+
+        if(
+            Settings.downloadAll ||
+            Settings.download3D
+        ) {
+            this.graphics3D();
         }
 
         this._endTime = System.currentTimeMillis();
@@ -159,11 +166,52 @@ public class Downloader
                     location.getAttributes().getNamedItem("id").getTextContent(),
                     location.getAttributes().getNamedItem("path").getTextContent()
             );
+        }
 
-            Console.debug(
-                    "Location: ",
+        for(int i = 0; i < f.getLength(); i++) {
+            Node file = f.item(i);
+
+            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
+            String name      = file.getAttributes().getNamedItem("name").getTextContent();
+            String extension = file.getAttributes().getNamedItem("type").getTextContent();
+
+            files.add(
+                    "/spacemap/"+ location + name +"."+ extension
+            );
+        }
+
+        Console.println("Downloading 2D graphic files...");
+        long start = System.currentTimeMillis();
+        long bytes = this._cd.download(files);
+        long end   = System.currentTimeMillis();
+
+        this.printStats(bytes, start, end);
+
+        this._bytes += bytes;
+    }
+
+    /**
+     * Downloads 3D graphic files.
+     */
+    public void graphics3D()
+    {
+        Document xml = this.loadXML("/spacemap/xml/resources_3d.xml");
+        if(xml == null) {
+            Console.debug("Couldn't download '/spacemap/xml/resources_3d.xml'!");
+
+            return;
+        }
+
+        NodeList l = xml.getElementsByTagName("location");
+        NodeList f = xml.getElementsByTagName("file");
+
+        HashMap<String, String> locations = new HashMap<>();
+        ArrayList<String>       files     = new ArrayList<>();
+
+        for(int i = 0; i < l.getLength(); i++) {
+            Node location = l.item(i);
+            locations.put(
                     location.getAttributes().getNamedItem("id").getTextContent(),
-                    "\nPath: ",
                     location.getAttributes().getNamedItem("path").getTextContent()
             );
         }
@@ -180,7 +228,7 @@ public class Downloader
             );
         }
 
-        Console.println("Downloading 2D graphic files...");
+        Console.println("Downloading 3D graphic files...");
         long start = System.currentTimeMillis();
         long bytes = this._cd.download(files);
         long end   = System.currentTimeMillis();
