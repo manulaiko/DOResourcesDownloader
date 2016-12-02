@@ -92,6 +92,13 @@ public class Downloader
             this.graphics3D();
         }
 
+        if(
+            Settings.downloadAll ||
+            Settings.downloadImages
+        ) {
+            this.images();
+        }
+
         this._endTime = System.currentTimeMillis();
 
         this.printStats(this._bytes, this._startTime, this._endTime);
@@ -229,6 +236,86 @@ public class Downloader
         }
 
         Console.println("Downloading 3D graphic files...");
+        long start = System.currentTimeMillis();
+        long bytes = this._cd.download(files);
+        long end   = System.currentTimeMillis();
+
+        this.printStats(bytes, start, end);
+
+        this._bytes += bytes;
+    }
+
+    /**
+     * Downloads image files.
+     */
+    public void images()
+    {
+        Document xml = this.loadXML("/do_img/global/xml/resource_items.xml");
+        if(xml == null) {
+            Console.debug("Couldn't download '/do_img/global/xml/resource_items.xml'!");
+
+            return;
+        }
+
+        NodeList l = xml.getElementsByTagName("location");
+        NodeList f = xml.getElementsByTagName("file");
+
+        HashMap<String, String> locations = new HashMap<>();
+        ArrayList<String>       files     = new ArrayList<>();
+
+        for(int i = 0; i < l.getLength(); i++) {
+            Node location = l.item(i);
+            locations.put(
+                    location.getAttributes().getNamedItem("id").getTextContent(),
+                    location.getAttributes().getNamedItem("path").getTextContent()
+            );
+        }
+
+        for(int i = 0; i < f.getLength(); i++) {
+            Node file = f.item(i);
+
+            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
+            String name      = file.getAttributes().getNamedItem("name").getTextContent();
+            String extension = file.getAttributes().getNamedItem("type").getTextContent();
+
+            files.add(
+                    "/do_img/global/"+ location + name +"."+ extension
+            );
+        }
+
+        xml = this.loadXML("/do_img/global/xml/resource_achievements.xml");
+        if(xml == null) {
+            Console.debug("Couldn't download '/do_img/global/xml/resource_achievements.xml'!");
+
+            return;
+        }
+
+        l = xml.getElementsByTagName("location");
+        f = xml.getElementsByTagName("file");
+
+        locations = new HashMap<>();
+
+        for(int i = 0; i < l.getLength(); i++) {
+            Node location = l.item(i);
+            locations.put(
+                    location.getAttributes().getNamedItem("id").getTextContent(),
+                    location.getAttributes().getNamedItem("path").getTextContent()
+            );
+        }
+
+        for(int i = 0; i < f.getLength(); i++) {
+            Node file = f.item(i);
+
+            String location  = locations.get(file.getAttributes().getNamedItem("location").getTextContent());
+            String name      = file.getAttributes().getNamedItem("name").getTextContent();
+            String extension = file.getAttributes().getNamedItem("type").getTextContent();
+
+            files.add(
+                    "/do_img/global/"+ location + name +"."+ extension
+            );
+        }
+
+        Console.println("Downloading image files...");
         long start = System.currentTimeMillis();
         long bytes = this._cd.download(files);
         long end   = System.currentTimeMillis();
